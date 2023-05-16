@@ -1,0 +1,104 @@
+// 页面容器
+.layout-container {
+  height: calc(100vh - 130px);
+  padding: 10px;
+  background-color: var(--system-container-background);
+  overflow: hidden;
+}
+.page-container {
+  width: 100%;
+}
+.flex-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+.flex {
+  display: flex;
+}
+.center {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+a {
+  text-decoration: none;
+}
+
+/** element-plus **/
+.el-icon {
+  text-align: center;
+}
+
+/** 用于提示信息 **/
+.my-tip {
+  background-color: #f1f1f1;
+  padding: 5px 10px;
+  text-align: left;
+  border-radius: 4px;
+}
+.system-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(144, 147, 153, 0.3);
+  }
+  &:hover {
+    &::-webkit-scrollbar {
+      display: block;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: rgba(144, 147, 153, 0.3);
+      &:hover {
+        background: rgba(144, 147, 153, 0.5);
+      }
+    }
+  }
+}
+// 自定义图标
+.custom-icon {
+  width: 100%;
+  height: 1.2em;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+// 解决侧边导航栏 不整齐的问题
+// 不整齐原因：.el-menu中多出了一个右边框，把他去掉就可以了
+.el-menu {
+  border-right: none !important;
+}
+// form的label字体不加粗
+.el-form-item__label {
+  font-weight: 400 !important;
+}
+.el-form-item {
+  margin-bottom: 10px !important;
+  margin-right: 20px;
+}
+// 表格样式
+.header-cell {
+  background-color: #1e90ff !important;
+  color: #fff !important;
+  text-align: center;
+}
+// 所有单元格文字居中
+.cell-class {
+  text-align: center;
+}
+.green {
+  background-color: #70b603;
+}
+.red {
+  background-color: #d7001a;
+}
+.grey {
+  background-color: #aaaaaa;
+}
