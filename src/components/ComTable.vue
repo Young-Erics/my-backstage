@@ -1,57 +1,60 @@
 <template>
   <div class="layout-container">
     <div class="form-card">
-      <el-form :model="form" :rules="rules" ref="elform" :inline="true" label-position="left">
+      <el-form :model="form" ref="elform" :inline="true" label-position="left" size="default" label-width="90px">
         <slot name="formItem">
-          <el-form-item label="查询日期:" prop="stime">
-            <el-date-picker v-model="form.stime" type="date" value-format="YYYY-MM-DD" placeholder="请选择日期" size="default" />
+          <el-form-item label="姓名:" prop="uname">
+            <el-input v-model.trim="form.uname" placeholder="" type="text" />
+          </el-form-item>
+          <el-form-item label="选择器:" prop="choose">
+            <el-select v-model="form.choose" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="查询日期:" prop="date">
+            <el-date-picker v-model="form.date" type="date" value-format="YYYY-MM-DD" placeholder="请选择日期" :shortcuts="dateShortcuts" />
+          </el-form-item>
+          <el-form-item class="date-range-item" label="范围日期:" prop="range">
+            <el-date-picker v-model="form.range" value-format="YYYY-MM-DD" type="daterange" range-separator="至" :shortcuts="dateRangeShortcuts" />
           </el-form-item>
         </slot>
-        <el-button type="primary" :icon="Search" @click="queryButton(queryName)">查询</el-button>
-        <el-button @click="reset" style="width: 80px"><icon-system-reset class="custom-icon" />&nbsp重置</el-button>
+        <el-button @click="queryButton" type="primary" :icon="Search">查询</el-button>
+        <el-button @click="reset" style="width: 80px; margin-left: 20px"><icon-system-reset class="custom-icon" />&nbsp重置</el-button>
       </el-form>
+
       <slot name="rightFigure"></slot>
       <slot name="state"></slot>
     </div>
     <div class="table-card">
       <el-table :data="tableData" :border="true" header-cell-class-name="header-cell" cell-class-name="cell-class" style="width: 100%" size="small">
         <slot name="tableColumn">
-          <template v-if="queryName == 'default'">
-            <el-table-column label="序号" prop="seq" width="50" />
-            <el-table-column prop="areanm" label="行政区名称" :show-overflow-tooltip="true" width="100" />
-            <el-table-column prop="orgnm" label="机构名称" :show-overflow-tooltip="true" width="150" />
-            <el-table-column v-for="(item, index) in tableHead" :key="index" :label="item.colnm">
-              <el-table-column v-for="(child, ind) in item.childs" :key="ind" :prop="child.colcd" :label="child.colnm">
-                <template v-slot:default="{ row }">
-                  <el-link v-if="child.isjump == 1" type="primary" :underline="false" @click="goDepDetail(child.colcd, row.areacd, row.orgcd)">{{
-                    row[child.colcd]
-                  }}</el-link>
-                  <span v-else>{{ row[child.colcd] }}</span>
-                </template>
-              </el-table-column>
-            </el-table-column>
-          </template>
-          <template v-else>
-            <el-table-column v-for="(item, index) in tableHead" :key="index" :label="item.colnm" :prop="item.colcd">
-              <template v-slot:default="{ row }">
-                <el-link v-if="item.isjump == 1" type="primary" :underline="false" @click="goPerDetail(row.orgcd, row.deptcd)">{{
-                  row[item.colcd]
-                }}</el-link>
-                <span v-else>{{ row[item.colcd] }}</span>
-              </template>
-            </el-table-column>
-          </template>
-          <!-- <my-table v-for="(item, index) in tableHead" :key="index" :col="item"> </my-table> -->
+          <el-table-column
+            v-for="(item, index) in columns"
+            :key="index"
+            :label="item.label"
+            :prop="item.prop"
+            :width="item.width"
+            :show-overflow-tooltip="item.tooltip"
+          >
+          </el-table-column>
         </slot>
-        <!-- table数据为空的插槽 -->
+        <el-table-column v-if="showOperate" label="操作" width="140" fixed="right">
+          <template v-slot:default="{ row }">
+            <el-row justify="space-around">
+              <el-link type="primary" :underline="false">查看</el-link>
+              <el-link type="primary" :underline="false">编辑</el-link>
+              <el-link type="primary" :underline="false">删除</el-link>
+            </el-row>
+          </template>
+        </el-table-column>
         <template #empty>
           <icon-system-empty />
           <div>暂无数据</div>
         </template>
       </el-table>
       <el-pagination
-        v-model:current-page="form.page"
-        v-model:page-size="form.pagesize"
+        v-model:current-page="form.pageNum"
+        v-model:page-size="form.pageSize"
         :page-sizes="[10, 20, 30]"
         :background="true"
         layout="total, sizes, prev, pager, next, jumper"
@@ -65,193 +68,133 @@
 
 <script setup>
 import { Search } from '@element-plus/icons-vue' //引入图标
-const proxy = getCurrentInstance()?.proxy
+import { queryDefaultData } from '@/api/mock.js'
+import { dateShortcuts, dateRangeShortcuts } from '@/utils/constant.js'
 onMounted(() => {
   let formCard = document.querySelector('.form-card')
   let tableCard = document.querySelector('.table-card')
   // console.log('formCard', formCard.offsetHeight)
   tableCard.style.height = `calc(100% - ${formCard.offsetHeight}px)`
   // 查询数据
-  queryData(queryName)
+  queryData()
 })
 // 定义props
-const { form, queryName, queryApi } = defineProps({
+const { form, queryApi } = defineProps({
   form: {
     type: Object,
     default: reactive({
-      jgmc: '',
-      sjfw: '',
-      pagesize: 20,
-      page: 1
+      date: '',
+      uname: '',
+      choose: '',
+      range: '',
+      pageNum: 1,
+      pageSize: 10
     })
   },
-  queryName: {
-    type: String,
-    default: 'default'
-  },
   queryApi: {
-    type: Function
+    type: Function,
+    default: queryDefaultData
+  },
+  columns: {
+    default: [
+      {
+        label: '姓名',
+        prop: 'uname',
+        width: '80'
+      },
+      {
+        label: '住址',
+        prop: 'address',
+        tooltip: true,
+        width: 'auto'
+      },
+      {
+        label: '日期',
+        prop: 'date',
+        width: '100'
+      }
+    ]
+  },
+  showOperate: {
+    default: true
   }
 })
 // watch(form, (newval, oldval) => console.log('form', newval))
-// ----------查询----------
-// 表格数据
-const tableData = ref([
-  // {
-  //   jgmc: '中心医院',
-  //   bmc: '123',
-  //   jgztjs: '3334',
-  //   cyl: '2%',
-  //   pttjs: '44',
-  //   cyl2: '3%',
-  //   cybfb: '25%'
-  // },
-  // {
-  //   jgmc: '中心医院',
-  //   bmc: '123',
-  //   jgztjs: '3334',
-  //   cyl: '2%',
-  //   pttjs: '44',
-  //   cyl2: '3%',
-  //   cybfb: '25%'
-  // }
-])
-const total = ref(0)
-const abnormalOptions = [
+const options = [
   {
-    label: '全部',
-    value: '0'
+    label: '西瓜',
+    value: 0
   },
   {
-    label: '正常',
-    value: '1'
+    label: '香蕉',
+    value: 1
   },
   {
-    label: '异常',
-    value: '2'
+    label: '苹果',
+    value: 2
   }
 ]
-// 表单校验
-const rules = reactive({
-  sdiff: [
-    {
-      min: 0,
-      max: 100,
-      type: 'number',
-      message: '必须是0-100之间的数字',
-      trigger: 'change'
-    }
-  ],
-  ediff: [
-    {
-      min: 0,
-      max: 100,
-      type: 'number',
-      message: '必须是0-100之间的数字',
-      trigger: 'change'
-    }
-  ]
-})
-const tableHead = ref([])
-const queryData = async queryName => {
-  await elform._value.validate(async (valid, fields) => {
-    if (valid) {
-      let sendTime = proxy.$Long(new Date())
-      let sign = proxy.$md5(form + sendTime)
-      let bodyData = {
-        req: form,
-        sign,
-        sendTime
-      }
-      const { datas, totalcnt, tabheads } = await queryApi(bodyData)
-      if (tabheads && tabheads.length > 0 && queryName == 'checkDep') {
-        tableHead.value = tabheads
-      } else if (tabheads && tabheads.length > 0 && queryName == 'default') {
-        tableHead.value = tabheads.filter(item => {
-          return item.childs && item.childs.length > 0
-        })
-      }
-      datas.forEach(item => {
-        if (item.abnormal != null) {
-          const abnormalRes = abnormalOptions.find(obj => obj.value == item.abnormal)
-          abnormalRes ? (item.abnormal = abnormalRes.label) : (item.abnormal = '未知')
-        }
-        item.busitime != null ? (item.busitime = proxy.$dayjs(item.busitime).format('YYYY-MM-DD')) : (item.busitime = item.busitime)
-      })
-      total.value = parseInt(totalcnt)
-      tableData.value = datas
-    } else {
-      console.log('error submit!', fields)
-    }
-  })
+// ----------查询----------
+const tableData = ref([])
+const total = ref(0)
+const queryData = async () => {
+  const { data } = await queryApi(2)
+  tableData.value = data.list
+  total.value = data.total
 }
 // 查询按钮
-const queryButton = queryName => {
-  form.page = 1
-  queryData(queryName)
+const queryButton = () => {
+  form.pageNum = 1
+  queryData()
 }
 defineExpose({
   queryData
-  // tableHead
 })
-// 去科室详情
-const router = useRouter()
-function goDepDetail(idxcd, areacd, orgcd) {
-  router.push({
-    name: 'depdetail',
-    query: {
-      idxcd: idxcd,
-      areacd: areacd,
-      orgcd: orgcd,
-      smonth: form.smonth
-    }
-  })
-}
-// 去人员列表
-function goPerDetail(orgcd, deptcd) {
-  router.push({
-    name: 'perdetail',
-    query: {
-      orgcd: orgcd,
-      deptcd: deptcd,
-      smonth: form.smonth
-    }
-  })
-}
 // ----------重置按钮----------
 const elform = ref(null)
 const reset = () => {
-  elform._value.resetFields()
-  form.page = 1
-  form.pagesize = 20
-  queryData(queryName)
+  elform.value.resetFields()
+  form.pageNum = 1
+  form.pageSize = 10
+  queryData()
 }
 // ----------分页逻辑----------
 // 改变显示的条数
 const handleSizeChange = val => {
-  form.pagesize = val
-  queryData(queryName)
+  form.pageSize = val
+  queryData()
 }
 // 改变页码
 const handleCurrentChange = newPage => {
-  form.page = newPage
-  queryData(queryName)
+  form.pageNum = newPage
+  queryData()
 }
 </script>
 
 <style lang="scss" scoped>
 .form-card {
   margin-bottom: 10px;
-  padding: 10px 10px 0px;
+  padding: 15px 15px 0;
   background-color: #fff;
   .el-form {
     display: flex;
     flex-wrap: wrap;
     .el-form-item {
       margin-bottom: 10px !important;
-      margin-right: 20px;
-      :deep(.el-form-item__label) {
-        font-weight: 400;
+      :deep() {
+        .el-form-item__label {
+          font-weight: 400;
+        }
+        .el-form-item__content {
+          width: 180px;
+        }
+      }
+    }
+    .date-range-item {
+      & > :deep() {
+        .el-form-item__content {
+          width: 240px;
+        }
       }
     }
   }
@@ -287,12 +230,9 @@ const handleCurrentChange = newPage => {
       font-size: 18px;
     }
   }
-  .el-date-editor {
-    width: 300px !important;
-  }
-  .abnormal {
-    color: red;
-  }
+  // .el-date-editor {
+  //   width: 300px !important;
+  // }
   // /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
   // ::-webkit-scrollbar {
   //   width: 6px; /*滚动条宽度*/

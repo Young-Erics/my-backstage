@@ -14,6 +14,8 @@ import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 // 从文件中加载图标的加载器
 import { FileSystemIconLoader } from 'unplugin-icons/loaders'
+import cdnImport from 'vite-plugin-cdn-import'
+import viteCompression from 'vite-plugin-compression'
 export default defineConfig({
   base: './',
   resolve: {
@@ -94,6 +96,28 @@ export default defineConfig({
         system: FileSystemIconLoader('src/assets/svg/system')
       },
       autoInstall: true
+    }),
+    cdnImport({
+      modules: [
+        {
+          name: 'lodash',
+          var: '_',
+          path: 'https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js'
+        },
+        {
+          name: 'axios',
+          var: 'axios',
+          path: 'https://cdn.jsdelivr.net/npm/axios@1.2.0/dist/axios.min.js'
+        }
+        // {
+        //   name: '@vueuse/core',
+        //   var: 'VueUse',
+        //   path: 'https://cdn.jsdelivr.net/npm/@vueuse/core@9.5.0/index.iife.min.js'
+        // }
+      ]
+    }),
+    viteCompression({
+      threshold: 512000
     })
   ]
 })

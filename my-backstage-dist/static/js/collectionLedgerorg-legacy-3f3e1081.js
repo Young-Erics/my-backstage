@@ -1,0 +1,1 @@
+System.register(["./vendors-legacy-0b778acc.js"],(function(e,t){"use strict";var c,r,s,n;return{setters:[e=>{c=e.o,r=e.c,s=e.u,n=e.R}],execute:function(){e("default",{__name:"collectionLedgerorg",setup:e=>(e,t)=>(c(),r(s(n)))})}}}));

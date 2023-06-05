@@ -7,6 +7,7 @@ import commonJS from '@/utils'
 import plugins from '@/plugins'
 import './assets/style/index.scss' // 公共css
 const app = createApp(App)
+app.config.devtools = true
 // import '@/permission.js'
 app.use(components) //注册所有的公共组件
 app.use(plugins)

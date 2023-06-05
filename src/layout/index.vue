@@ -24,8 +24,8 @@
         </router-view>
       </el-main>
       <footer>
-        <div>深圳市卫生健康发展研究和数据管理中心</div>
-        <div>技术支持：万达信息股份有限公司</div>
+        <div>世界既不黑也不白,而是一道精致的灰。</div>
+        <div>谎言不会伤人，真相才是快刀。</div>
       </footer>
     </el-container>
   </el-container>
@@ -96,7 +96,6 @@ export default defineComponent({
   flex-direction: column;
   transition: 0.2s;
   overflow-x: hidden;
-  transition: 0.3s;
   &::-webkit-scrollbar {
     width: 0 !important;
   }

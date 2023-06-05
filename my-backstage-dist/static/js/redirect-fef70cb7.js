@@ -1,0 +1,1 @@
+import{e as a,v as c,u as p,o as u,l as i}from"./vendors-d86bafeb.js";import{_}from"./index-419f057c.js";const f=a({name:"Redirect",setup(){const{currentRoute:r,replace:t}=c(),{params:o,query:n}=p(r),{path:e}=o,s=Array.isArray(e)?e.join("/"):e;return t({path:"/"+s,query:n}),{}}});function m(r,t,o,n,e,s){return u(),i("div")}const h=_(f,[["render",m]]);export{h as default};
