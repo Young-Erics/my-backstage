@@ -107,7 +107,7 @@ export default defineComponent({
   flex: 1;
   &::-webkit-scrollbar {
     display: none;
-    width: 6px;
+    width: 10px;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;

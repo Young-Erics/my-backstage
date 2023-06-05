@@ -14,6 +14,9 @@
         <div class="section">内容</div>
       </div>
     </div>
+    <br />
+    <h2>图片懒加载指令</h2>
+    <img v-for="(val, index) in imageArr" :key="index" v-lazy="val" :src="val" alt="" />
   </div>
 </template>
 <script setup>
@@ -64,6 +67,35 @@ const vMove = el => {
     document.addEventListener('mouseup', mouseUp)
   }
   dragElement.addEventListener('mousedown', mouseDown)
+}
+/**
+ *  图片懒加载
+ */
+// 1.glob 是懒加载模式，相当于
+// let modules = {
+//   'xxxx': () => import('xxxxx') //会代码分包
+// }
+// 2.globEager 是静态加载模式，直接加载，相当于
+// import modules from 'xxxx'
+let imageList = import.meta.glob('@/assets/images/*.png', { eager: true })
+console.log('imageList', imageList)
+let imageArr = Object.values(imageList).map(v => v.default)
+let vLazy = async (el, bindings) => {
+  // 默认显示的图片
+  const def = await import('@/assets/images/404.png')
+  el.src = def.default
+  const observer = new IntersectionObserver(entry => {
+    console.log('entry', entry[0])
+    // intersectionRatio表示监听的dom元素占视口的比例，若大于0，则表示出现在我们视野中了
+    setTimeout(() => {
+      if (entry[0].intersectionRatio > 0) {
+        el.src = bindings.value
+        //  赋值完之后，就可以注销监听
+        observer.unobserve(el)
+      }
+    }, 2000)
+  })
+  observer.observe(el) //监听dom
 }
 </script>
 
