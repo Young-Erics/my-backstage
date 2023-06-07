@@ -293,6 +293,12 @@ const route = [
         name: 'vueuse',
         component: () => import('@/views/hooks/vueuse.vue'),
         meta: { title: 'vueuse常用', cache: false }
+      },
+      {
+        path: 'custome',
+        name: 'custome',
+        component: () => import('@/views/hooks/custome.vue'),
+        meta: { title: '自定义指令', cache: false }
       }
     ]
   }

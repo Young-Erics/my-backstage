@@ -49,9 +49,12 @@ declare module '@vue/runtime-core' {
     IconHomeCollect: typeof import('~icons/home/collect')['default']
     IconHomeNotice: typeof import('~icons/home/notice')['default']
     IconHomeStatistic: typeof import('~icons/home/statistic')['default']
+    IconParkAdobePhotoshop: typeof import('~icons/icon-park/adobe-photoshop')['default']
     IconSystemEmpty: typeof import('~icons/system/empty')['default']
     IconSystemReset: typeof import('~icons/system/reset')['default']
+    IconTeenyiconsAlarmSolid: typeof import('~icons/teenyicons/alarm-solid')['default']
     IconUserExitScreen: typeof import('~icons/user/exit-screen')['default']
+    IconUserUser: typeof import('~icons/user/user')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
