@@ -281,6 +281,20 @@ const route = [
         meta: { title: 'vuex常用', cache: false }
       }
     ]
+  },
+  {
+    path: '/hooks',
+    component: Layout,
+    meta: { title: 'hooks' },
+    alwayShow: true,
+    children: [
+      {
+        path: 'vueuse',
+        name: 'vueuse',
+        component: () => import('@/views/hooks/vueuse.vue'),
+        meta: { title: 'vueuse常用', cache: false }
+      }
+    ]
   }
 ]
 

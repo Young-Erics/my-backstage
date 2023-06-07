@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
     <div class="form-card">
-      <el-form :model="form" ref="elform" :inline="true" label-position="left" size="default" label-width="90px">
+      <el-form :model="form" ref="elform" :inline="true" label-position="left" size="default" :label-width="labelWidth">
         <slot name="formItem">
           <el-form-item label="姓名:" prop="uname">
             <el-input v-model.trim="form.uname" placeholder="" type="text" />
@@ -117,6 +117,9 @@ const { form, queryApi } = defineProps({
   },
   showOperate: {
     default: true
+  },
+  labelWidth: {
+    default: '90px'
   }
 })
 // watch(form, (newval, oldval) => console.log('form', newval))
