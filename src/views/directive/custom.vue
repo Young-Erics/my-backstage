@@ -17,6 +17,8 @@
     <br />
     <h2>图片懒加载指令</h2>
     <img v-for="(val, index) in imageArr" :key="index" v-lazy="val" :src="val" alt="" />
+    <h2>自定义resize指令</h2>
+    <div id="resize" v-resize="resize"></div>
   </div>
 </template>
 <script setup>
@@ -97,6 +99,10 @@ let vLazy = async (el, bindings) => {
   })
   observer.observe(el) //监听dom
 }
+// resize
+function resize(e) {
+  console.log('resize', e)
+}
 </script>
 
 <style lang="scss" scoped>
@@ -127,5 +133,12 @@ p {
     width: 100%;
     height: 250px;
   }
+}
+#resize {
+  resize: both;
+  width: 200px;
+  height: 300px;
+  border: 1px solid #ccc;
+  overflow: hidden;
 }
 </style>
