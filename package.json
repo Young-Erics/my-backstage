@@ -24,6 +24,7 @@
     "nprogress": "^0.2.0",
     "pinia": "^2.0.34",
     "print-js": "1.6.0",
+    "v-resize-yc": "^1.0.0",
     "vue": "^3.2.38",
     "vue-router": "^4.1.5",
     "vuex": "^4.1.0"
