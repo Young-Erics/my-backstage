@@ -1,6 +1,6 @@
 <template>
   <!-- 采集需求计划 -->
-  <com-table ref="child" :form="form" :queryApi="queryDemandPlan">
+  <com-table ref="child" :form="form">
     <template #formItem>
       <el-form-item label="数据源名称:" prop="jgmc" label-width="90px">
         <el-input v-model.trim="form.jgmc" placeholder="" type="text" />
@@ -49,7 +49,7 @@
 </template>
 
 <script setup>
-import { queryDemandPlan } from '@/api/mock.js'
+// import { queryDemandPlan } from '@/api/mock.js'
 const router = useRouter()
 const form = reactive({
   jgmc: '',

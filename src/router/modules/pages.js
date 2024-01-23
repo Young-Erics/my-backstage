@@ -269,6 +269,20 @@ const route = [
     ]
   },
   {
+    path: '/vueapi',
+    component: Layout,
+    meta: { title: 'vueapi' },
+    alwayShow: true,
+    children: [
+      {
+        path: 'api1',
+        name: 'api1',
+        component: () => import('@/views/vueapi/index.vue'),
+        meta: { title: 'vueapi', cache: true }
+      }
+    ]
+  },
+  {
     path: '/vuex',
     component: Layout,
     meta: { title: 'vuex' },

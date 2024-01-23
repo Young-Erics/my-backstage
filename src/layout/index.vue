@@ -13,13 +13,11 @@
       <el-main>
         <router-view v-slot="{ Component, route }">
           <transition :name="route.meta.transition || 'fade-transform'" mode="out-in">
-            <div>
-              <!-- include 只有名称匹配的组件会被缓存。 -->
-              <keep-alive v-if="keepAliveComponentsName" :include="keepAliveComponentsName">
-                <component :is="Component" :key="route.fullPath" />
-              </keep-alive>
-              <component v-else :is="Component" :key="route.fullPath" />
-            </div>
+            <!-- include 只有名称匹配的组件会被缓存。 -->
+            <keep-alive v-if="keepAliveComponentsName" :include="keepAliveComponentsName">
+              <component :is="Component" :key="route.fullPath" />
+            </keep-alive>
+            <component v-else :is="Component" :key="route.fullPath" />
           </transition>
         </router-view>
       </el-main>
@@ -31,13 +29,13 @@
   </el-container>
 </template>
 <script>
-import { defineComponent, computed, onBeforeMount } from 'vue'
-import { useStore } from 'vuex'
-import { useEventListener } from '@vueuse/core'
-import Menu from './Menu/index.vue'
-import Logo from './Logo/index.vue'
-import Header from './Header/index.vue'
-import Tabs from './Tabs/index.vue'
+import { defineComponent, computed, onBeforeMount } from "vue";
+import { useStore } from "vuex";
+import { useEventListener } from "@vueuse/core";
+import Menu from "./Menu/index.vue";
+import Logo from "./Logo/index.vue";
+import Header from "./Header/index.vue";
+import Tabs from "./Tabs/index.vue";
 export default defineComponent({
   components: {
     Menu,
@@ -46,34 +44,34 @@ export default defineComponent({
     Tabs
   },
   setup() {
-    const store = useStore()
+    const store = useStore();
     // computed
-    const isCollapse = computed(() => store.state.app.isCollapse)
-    const contentFullScreen = computed(() => store.state.app.contentFullScreen)
-    const showLogo = computed(() => store.state.app.showLogo)
-    const showTabs = computed(() => store.state.app.showTabs)
-    const keepAliveComponentsName = computed(() => store.getters['keepAlive/keepAliveComponentsName'])
-    console.log('keepAliveComponentsName', keepAliveComponentsName)
+    const isCollapse = computed(() => store.state.app.isCollapse);
+    const contentFullScreen = computed(() => store.state.app.contentFullScreen);
+    const showLogo = computed(() => store.state.app.showLogo);
+    const showTabs = computed(() => store.state.app.showTabs);
+    const keepAliveComponentsName = computed(() => store.getters["keepAlive/keepAliveComponentsName"]);
+    console.log("keepAliveComponentsName", keepAliveComponentsName);
     // 页面宽度变化监听后执行的方法
     const resizeHandler = () => {
       if (document.body.clientWidth <= 1000 && !isCollapse.value) {
-        store.commit('app/isCollapseChange', true)
+        store.commit("app/isCollapseChange", true);
       } else if (document.body.clientWidth > 1000 && isCollapse.value) {
-        store.commit('app/isCollapseChange', false)
+        store.commit("app/isCollapseChange", false);
       }
-    }
+    };
     // 初始化调用
-    resizeHandler()
+    resizeHandler();
     // beforeMount
     onBeforeMount(() => {
       // 监听页面变化
-      useEventListener('resize', resizeHandler)
-    })
+      useEventListener("resize", resizeHandler);
+    });
     // methods
     // 隐藏菜单
     const hideMenu = () => {
-      store.commit('app/isCollapseChange', true)
-    }
+      store.commit("app/isCollapseChange", true);
+    };
     return {
       isCollapse,
       showLogo,
@@ -81,9 +79,9 @@ export default defineComponent({
       contentFullScreen,
       keepAliveComponentsName,
       hideMenu
-    }
+    };
   }
-})
+});
 </script>
 <style lang="scss" scoped>
 .el-header {
@@ -106,25 +104,28 @@ export default defineComponent({
   padding: 0;
   flex: 1;
   &::-webkit-scrollbar {
-    display: none;
+    display: block;
     width: 10px;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: rgba(144, 147, 153, 0.3);
-  }
-  &:hover {
-    &::-webkit-scrollbar {
-      display: block;
-    }
-    &::-webkit-scrollbar-thumb {
-      border-radius: 10px;
-      background: rgba(144, 147, 153, 0.3);
-      &:hover {
-        background: rgba(144, 147, 153, 0.5);
-      }
+    &:hover {
+      background: rgba(144, 147, 153, 0.5);
     }
   }
+  // &:hover {
+  //   &::-webkit-scrollbar {
+  //     display: block;
+  //   }
+  //   &::-webkit-scrollbar-thumb {
+  //     border-radius: 10px;
+  //     background: rgba(144, 147, 153, 0.3);
+  //     &:hover {
+  //       background: rgba(144, 147, 153, 0.5);
+  //     }
+  //   }
+  // }
 }
 footer {
   background-color: var(--system-container-background);

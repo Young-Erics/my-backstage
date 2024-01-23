@@ -57,5 +57,6 @@ declare module '@vue/runtime-core' {
     IconUserUser: typeof import('~icons/user/user')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UseDark: typeof import('@vueuse/components')['UseDark']
   }
 }

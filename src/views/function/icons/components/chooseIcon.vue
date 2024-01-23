@@ -16,39 +16,40 @@
 </template>
 
 <script setup>
-import * as icons from '@element-plus/icons-vue'
-import { getCurrentInstance } from 'vue'
-const { proxy } = getCurrentInstance()
+import * as icons from "@element-plus/icons-vue";
+import { getCurrentInstance } from "vue";
+import { cloneDeep } from "lodash-es";
+const { proxy } = getCurrentInstance();
 const props = defineProps({
   showDialog: Boolean
-})
+});
 // 将导入的所有ele图标组成数组形式来遍历渲染
-const iconList = ref([])
+const iconList = ref([]);
 Object.keys(icons).forEach(key => {
   let item = {
     iconName: key,
     icon: markRaw(icons[key])
-  }
-  iconList.value.push(item)
-})
-const emit = defineEmits(['update:showDialog', 'update:selectIcon'])
+  };
+  iconList.value.push(item);
+});
+const emit = defineEmits(["update:showDialog", "update:selectIcon"]);
 // 实现图标搜索
-const searchIcon = ref('')
-let deep = proxy.$lodash.cloneDeep(iconList.value)
+const searchIcon = ref("");
+let deep = cloneDeep(iconList.value);
 const search = value => {
-  if (!value) return (iconList.value = deep)
+  if (!value) return (iconList.value = deep);
   iconList.value = deep.filter(item => {
-    return item.iconName.toLowerCase().indexOf(value.toLowerCase()) > -1
-  })
-}
+    return item.iconName.toLowerCase().indexOf(value.toLowerCase()) > -1;
+  });
+};
 function closeDialog() {
-  emit('update:showDialog', false)
+  emit("update:showDialog", false);
 }
 // 选择图标
 const select = item => {
-  emit('update:selectIcon', item)
-  closeDialog()
-}
+  emit("update:selectIcon", item);
+  closeDialog();
+};
 </script>
 <style lang="scss" scoped>
 .icon-list {
